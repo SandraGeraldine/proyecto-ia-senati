@@ -33,14 +33,21 @@ def analyze_text():
             return jsonify({'success': False, 'error': 'No se proporcionó texto'}), 400
         
         # Análisis de sentimiento
-        sentiment = analizar_sentimiento(text)
+        sentiment_result = analizar_sentimiento(text)
         
+        # Verificar si hubo un error en el análisis de sentimiento
+        if 'error' in sentiment_result and sentiment_result['error']:
+            return jsonify({
+                'success': False,
+                'error': f"Error en el análisis de sentimiento: {sentiment_result['error']}"
+            }), 500
+            
         # Traducción al inglés
         translation = traducir_texto(text, "en")
         
         return jsonify({
             'success': True,
-            'sentiment': sentiment,
+            'sentiment': sentiment_result,
             'translation': translation
         })
     except Exception as e:
